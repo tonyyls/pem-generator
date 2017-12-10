@@ -1,0 +1,34 @@
+#!/bin/bash
+
+#--------------
+#功能：导出苹果推送证书
+#使用：需要导出p12文件到根目录
+#	apns-cert.p12:推送证书
+#	apns-key.p12:证书Key
+#	进入到gpem目录,终端执行 ./gpem，按照步骤进行生成
+#--------------
+
+cert_filename="apns-cert.pem"
+key_filename="apns-key.pem"
+key_noenc_filename="apns-key-noenc.pem"
+
+openssl pkcs12 -clcerts -nokeys -out ${cert_filename} -in apns-cert.p12
+openssl pkcs12 -nocerts -out ${key_filename} -in apns-key.p12
+openssl rsa -in ${key_filename} -out ${key_noenc_filename}
+
+if [ -d ./bucket ];then
+rm -rf bucket
+fi
+mkdir bucket
+
+cp ${cert_filename} bucket
+cp ${key_noenc_filename} bucket
+
+rm ${cert_filename}
+rm ${key_filename}
+rm ${key_noenc_filename}
+
+echo 'Generate aps pem success!'
+
+exit
+
